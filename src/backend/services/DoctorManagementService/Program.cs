@@ -13,8 +13,9 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "DoctorManagementService API", Version = "v1" });
 });
 
-// EF Core InMemory
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("DoctorDb"));
+// EF Core PostgreSQL
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(connectionString));
 
 // CORS
 builder.Services.AddCors(options =>
