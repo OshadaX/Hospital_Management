@@ -33,9 +33,9 @@ using (var scope = app.Services.CreateScope())
     if (!context.Doctors.Any())
     {
         context.Doctors.AddRange(
-            new Doctor { FullName = "Dr. Alice Smith", Specialization = "Cardiology", Email = "alice.smith@hospital.com", PhoneNumber = "1112223333", IsAvailable = true },
-            new Doctor { FullName = "Dr. Bob Jones", Specialization = "Neurology", Email = "bob.jones@hospital.com", PhoneNumber = "4445556666", IsAvailable = true },
-            new Doctor { FullName = "Dr. Charlie Williams", Specialization = "Pediatrics", Email = "charlie.williams@hospital.com", PhoneNumber = "7778889999", IsAvailable = false }
+            new Doctor { FirstName = "Alice", LastName = "Smith", Specialization = "Cardiology", Email = "alice.smith@hospital.com", PhoneNumber = "1112223333", IsAvailable = true },
+            new Doctor { FirstName = "Bob", LastName = "Jones", Specialization = "Neurology", Email = "bob.jones@hospital.com", PhoneNumber = "4445556666", IsAvailable = true },
+            new Doctor { FirstName = "Charlie", LastName = "Williams", Specialization = "Pediatrics", Email = "charlie.williams@hospital.com", PhoneNumber = "7778889999", IsAvailable = false }
         );
         context.SaveChanges();
     }

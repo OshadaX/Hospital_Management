@@ -1,16 +1,12 @@
 export interface Doctor {
-  id: string
+  id: number
   firstName: string
   lastName: string
   specialization: string
   email: string
-  phone: string
-  licenseNumber: string
-  department: string
-  workingDays: string[]
-  profileImageUrl?: string
-  status: 'Available' | 'InConsultation' | 'OffDuty'
-  yearsOfExperience?: number
+  phoneNumber: string
+  isAvailable: boolean
+  createdAt?: string
 }
 
-export type DoctorFormData = Omit<Doctor, 'id'>
+export type DoctorFormData = Omit<Doctor, 'id' | 'createdAt'>
