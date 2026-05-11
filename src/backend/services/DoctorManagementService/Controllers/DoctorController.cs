@@ -23,7 +23,8 @@ namespace DoctorManagementService.Controllers
         {
             var doctor = new Doctor
             {
-                FullName = dto.FullName,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
                 Specialization = dto.Specialization,
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
@@ -59,7 +60,8 @@ namespace DoctorManagementService.Controllers
             var doctor = await _context.Doctors.FindAsync(id);
             if (doctor == null) return NotFound(new { message = "Not found" });
 
-            doctor.FullName = dto.FullName;
+            doctor.FirstName = dto.FirstName;
+            doctor.LastName = dto.LastName;
             doctor.Specialization = dto.Specialization;
             doctor.Email = dto.Email;
             doctor.PhoneNumber = dto.PhoneNumber;

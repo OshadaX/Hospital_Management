@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
 export const doctorsService = {
   getAll: async (): Promise<Doctor[]> => {
     const res = await api.get('/api/doctors')
-    return res.data
+    return Array.isArray(res.data) ? res.data : []
   },
 
   getById: async (id: string): Promise<Doctor> => {

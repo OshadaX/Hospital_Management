@@ -5,46 +5,31 @@ import { doctorsService } from '../../services/doctorsService'
 // ── Fallback mock data so the UI works before backend is connected ──
 const MOCK_DOCTORS: Doctor[] = [
   {
-    id: '1',
+    id: 1,
     firstName: 'Sarah',
     lastName: 'Jenkins',
     specialization: 'Cardiology',
     email: 'sarah.jenkins@carepulse.com',
-    phone: '+1 (555) 123-4567',
-    licenseNumber: 'MD-001',
-    department: 'Cardiology',
-    workingDays: ['Mon', 'Wed', 'Fri'],
-    status: 'Available',
-    profileImageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuA73_ZHHc_HnUf6x5eMd6Hy0K_WXCD_I0THLXZYsTLEcGVO1ra5Jby_dGy-FBvbE4XDi3opVmAA7GoW9qAoIscx7pa3a1Ng4UbyTNETA4hitJEn3gp2fmWIyKvo6PjDb-Gl6v9J5shTbUAn8TYWNh3jhHEwQK-j-xWBd-WaOn-uX_Piu450sQW1mSwnI2W0NBD67DLFAvvaARBKQoJZppphrT01F3puACwNLbG1O_vfDkLbpRHn0u1sd2YjtTc4FGv9K4Z6mG4KCe0',
+    phoneNumber: '+1 (555) 123-4567',
+    isAvailable: true,
   },
   {
-    id: '2',
+    id: 2,
     firstName: 'Marcus',
     lastName: 'Chen',
     specialization: 'Neurology',
     email: 'm.chen@carepulse.com',
-    phone: '+1 (555) 987-6543',
-    licenseNumber: 'MD-002',
-    department: 'Neurology',
-    workingDays: ['Tue', 'Thu'],
-    status: 'InConsultation',
-    profileImageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAf7S2ErcsIx3Wh6IJXbpQ6cQcRj4NjuN7rPRrrya7YNZcvGhxuwsVKa6gims6rE5njR-mXnksHAmLhY3CfeBXb_0GAsEDmQ9tGi0-xy6oN6_1wbmT-42hcP60YLSpCuieNHEPqHvylq5HTtcvfsFVbW-OG9_N5gSXF2uOUqHBYDIJjF5dLJOJQ_pb04C2zWZicINKYe-cZk4thaI9vNx5oiwKH5XtJ2tKzHVVqjMHFYLkVMMC4MiFNlmXsnlS4OItJGNnL2gVmw7M',
+    phoneNumber: '+1 (555) 987-6543',
+    isAvailable: true,
   },
   {
-    id: '3',
+    id: 3,
     firstName: 'Elena',
     lastName: 'Rostova',
     specialization: 'Pediatrics',
     email: 'e.rostova@carepulse.com',
-    phone: '+1 (555) 456-7890',
-    licenseNumber: 'MD-003',
-    department: 'Pediatrics',
-    workingDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-    status: 'Available',
-    profileImageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCEenXO_JSIRSaxDPpsBYLNpvrfwFoTRTwXPUhFA3EJzKgLuZdZyaDBFVQBRxfcUnKGTAYU1ACFneGO3jGkRlpsg_s33F8pbmRlwMYLoJiE5aR-VIRt3rXkv-M-tL-2xu9eeD6jWZq9yrPS02JxpPXXhYRQkW5_2YH13Xl8EY2xh7vB6bccZt8E4IOsotCEemuli9A1GZburK5X_HD98JmqOEA2Hlfb94spSOZ1NCsChpSsPkeXHjkkl4DVPMWqGa2jx8vNjZVifAo',
+    phoneNumber: '+1 (555) 456-7890',
+    isAvailable: false,
   },
 ]
 
@@ -56,13 +41,13 @@ interface DoctorCardProps {
 }
 
 function DoctorCard({ doctor, onEdit, onViewProfile }: DoctorCardProps) {
-  const fullName = `Dr. ${doctor.firstName} ${doctor.lastName}`
+  const profileImageUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.firstName + ' ' + doctor.lastName)}&background=random`
 
   return (
     <article className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.02)] flex flex-col gap-5 relative group hover:shadow-[0_10px_30px_rgba(0,0,0,0.04)] transition-shadow">
       {/* Edit button — visible on hover */}
       <button
-        aria-label={`Edit ${fullName}`}
+        aria-label={`Edit ${doctor.firstName} ${doctor.lastName}`}
         onClick={() => onEdit(doctor)}
         className="absolute top-4 right-4 text-outline hover:text-on-background transition-colors opacity-0 group-hover:opacity-100"
       >
@@ -73,15 +58,14 @@ function DoctorCard({ doctor, onEdit, onViewProfile }: DoctorCardProps) {
       <div className="flex flex-col items-center text-center mt-2">
         <div
           className="w-20 h-20 rounded-full bg-surface-variant mb-4 bg-cover bg-center border border-outline-variant/50"
-          style={
-            doctor.profileImageUrl
-              ? { backgroundImage: `url('${doctor.profileImageUrl}')` }
-              : undefined
-          }
-          aria-label={fullName}
+          style={{ backgroundImage: `url('${profileImageUrl}')` }}
+          aria-label={doctor.firstName + ' ' + doctor.lastName}
         />
-        <h3 className="text-title-lg text-on-background">{fullName}</h3>
-        <p className="text-body-md text-on-surface-variant mt-1">{doctor.specialization}</p>
+        <h3 className="text-title-lg text-on-background">{doctor.firstName + ' ' + doctor.lastName}</h3>
+        <div className="flex items-center gap-2 mt-1">
+          <p className="text-body-md text-on-surface-variant">{doctor.specialization}</p>
+          <span className={`w-2 h-2 rounded-full ${doctor.isAvailable ? 'bg-green-500' : 'bg-red-500'}`} />
+        </div>
       </div>
 
       {/* Contact info */}
@@ -92,20 +76,8 @@ function DoctorCard({ doctor, onEdit, onViewProfile }: DoctorCardProps) {
         </div>
         <div className="flex items-center gap-3 text-label-md text-on-surface-variant">
           <span className="material-symbols-outlined text-[16px]">call</span>
-          <span>{doctor.phone}</span>
+          <span>{doctor.phoneNumber}</span>
         </div>
-      </div>
-
-      {/* Working days */}
-      <div className="flex flex-wrap gap-2 mt-1">
-        {doctor.workingDays.map((day) => (
-          <span
-            key={day}
-            className="px-2 py-1 rounded border border-outline-variant text-label-sm text-on-surface-variant bg-surface-container-lowest"
-          >
-            {day}
-          </span>
-        ))}
       </div>
 
       {/* View Profile link */}
@@ -116,6 +88,9 @@ function DoctorCard({ doctor, onEdit, onViewProfile }: DoctorCardProps) {
         >
           View Profile
         </button>
+        <span className={`text-label-sm font-semibold ${doctor.isAvailable ? 'text-green-600' : 'text-red-600'}`}>
+          {doctor.isAvailable ? 'Available' : 'Unavailable'}
+        </span>
       </div>
     </article>
   )
@@ -157,14 +132,19 @@ export default function DoctorsPage() {
   // ── Filtered list ──
   const filtered = useMemo(() => {
     return doctors.filter((d) => {
-      const fullName = `${d.firstName} ${d.lastName}`.toLowerCase()
+      const fullName = d.firstName + ' ' + d.lastName
       const matchesSearch =
         !searchQuery ||
         fullName.includes(searchQuery.toLowerCase()) ||
         d.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
         d.email.toLowerCase().includes(searchQuery.toLowerCase())
+
       const matchesSpec = !specializationFilter || d.specialization === specializationFilter
-      const matchesStatus = !statusFilter || d.status === statusFilter
+
+      let matchesStatus = true
+      if (statusFilter === 'Available') matchesStatus = d.isAvailable === true
+      if (statusFilter === 'Unavailable') matchesStatus = d.isAvailable === false
+
       return matchesSearch && matchesSpec && matchesStatus
     })
   }, [doctors, searchQuery, specializationFilter, statusFilter])
@@ -244,26 +224,6 @@ export default function DoctorsPage() {
             </span>
             <span className="text-body-md font-medium">Patients</span>
           </a>
-
-          <a
-            href="/lab-reports"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors"
-          >
-            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 0" }}>
-              biotech
-            </span>
-            <span className="text-body-md font-medium">Lab Reports</span>
-          </a>
-
-          <a
-            href="/medicines"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors"
-          >
-            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 0" }}>
-              medication
-            </span>
-            <span className="text-body-md font-medium">Medicines</span>
-          </a>
         </nav>
 
         <div className="p-4 border-t border-outline-variant">
@@ -332,8 +292,7 @@ export default function DoctorsPage() {
               >
                 <option value="">Status</option>
                 <option value="Available">Available</option>
-                <option value="InConsultation">In Consultation</option>
-                <option value="OffDuty">Off Duty</option>
+                <option value="Unavailable">Unavailable</option>
               </select>
             </div>
           </div>
