@@ -7,8 +7,8 @@ import { Sidebar } from '../../components/shared/Sidebar'
 import { DoctorsHeader } from './components/DoctorsHeader'
 import { DoctorsFilters } from './components/DoctorsFilters'
 import { DoctorsGrid } from './components/DoctorsGrid'
+import { AddDoctorModal } from './components/AddDoctorModal'
 
-// ── Fallback mock data ──
 const MOCK_DOCTORS: Doctor[] = [
   {
     id: 1,
@@ -19,24 +19,6 @@ const MOCK_DOCTORS: Doctor[] = [
     phoneNumber: '+1 (555) 123-4567',
     isAvailable: true,
   },
-  {
-    id: 2,
-    firstName: 'Marcus',
-    lastName: 'Chen',
-    specialization: 'Neurology',
-    email: 'm.chen@carepulse.com',
-    phoneNumber: '+1 (555) 987-6543',
-    isAvailable: true,
-  },
-  {
-    id: 3,
-    firstName: 'Elena',
-    lastName: 'Rostova',
-    specialization: 'Pediatrics',
-    email: 'e.rostova@carepulse.com',
-    phoneNumber: '+1 (555) 456-7890',
-    isAvailable: false,
-  },
 ]
 
 export default function DoctorsPage() {
@@ -46,22 +28,23 @@ export default function DoctorsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [specializationFilter, setSpecializationFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // ── Data Fetching ──
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        setLoading(true)
-        const data = await doctorsService.getAll()
-        setDoctors(data)
-      } catch {
-        setDoctors(MOCK_DOCTORS)
-        setError(null)
-      } finally {
-        setLoading(false)
-      }
+  const loadDoctors = async () => {
+    try {
+      setLoading(true)
+      const data = await doctorsService.getAll()
+      setDoctors(data)
+    } catch {
+      setDoctors(MOCK_DOCTORS)
+    } finally {
+      setLoading(false)
     }
-    fetchDoctors()
+  }
+
+  useEffect(() => {
+    loadDoctors()
   }, [])
 
   // ── Filter Logic ──
@@ -89,16 +72,25 @@ export default function DoctorsPage() {
   }, [doctors, searchQuery, specializationFilter, statusFilter])
 
   // ── Handlers ──
-  const handleEdit = (doctor: Doctor) => console.log('Edit doctor:', doctor.id)
-  const handleViewProfile = (doctor: Doctor) => console.log('View profile:', doctor.id)
-  const handleAddDoctor = () => console.log('Add new doctor')
+  const handleAddDoctor = () => setIsModalOpen(true)
+
+  const handleSubmitDoctor = async (data: Omit<Doctor, 'id'>) => {
+    try {
+      await doctorsService.create(data)
+      await loadDoctors() // Refresh the list
+    } catch (err) {
+      console.error("Failed to add doctor", err)
+      alert("Could not add doctor. Check if the backend is running.")
+    }
+  }
+
+  const handleEdit = (doctor: Doctor) => console.log('Edit:', doctor.id)
+  const handleViewProfile = (doctor: Doctor) => console.log('View:', doctor.id)
 
   return (
-    <div className="bg-surface-container-lowest text-on-surface min-h-screen antialiased flex">
-      {/* ── Fixed Sidebar ── */}
+    <div className="bg-surface-container-lowest text-on-surface min-h-screen flex">
       <Sidebar />
 
-      {/* ── Main Content Area ── */}
       <main className="flex-1 md:ml-[260px] min-h-screen flex flex-col bg-surface-container-lowest">
         <DoctorsHeader totalCount={filtered.length} onAdd={handleAddDoctor} />
 
@@ -121,6 +113,12 @@ export default function DoctorsPage() {
             onViewProfile={handleViewProfile}
           />
         </div>
+
+        <AddDoctorModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSubmitDoctor}
+        />
       </main>
     </div>
   )
